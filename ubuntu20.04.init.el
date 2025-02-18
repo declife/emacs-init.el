@@ -89,6 +89,7 @@
   (prettify-symbols-mode)))
 
 ;; org-mode src blocks
+(setq org-babel-python-command "python3")
 (org-babel-do-load-languages
  'org-babel-load-languages '((python . t) (C . t)))
 
