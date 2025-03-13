@@ -16,17 +16,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(gruvbox-light-soft))
- '(custom-safe-themes
-   '("0517759e6b71f4ad76d8d38b69c51a5c2f7196675d202e3c2507124980c3c2a3"
-     "18a1d83b4e16993189749494d75e6adb0e15452c80c431aca4a867bcc8890ca9"
-     "5aedf993c7220cbbe66a410334239521d8ba91e1815f6ebde59cecc2355d7757"
-     "75b371fce3c9e6b1482ba10c883e2fb813f2cc1c88be0b8a1099773eb78a7176"
-     default))
  '(org-agenda-files '("~/project/document/alpine.org"))
- '(package-selected-packages
-   '(avy company dap-mode flycheck helm-lsp helm-xref hydra lsp-mode
-	 lsp-treemacs projectile vterm which-key yasnippet)))
+ '(package-selected-packages nil))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -38,6 +29,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+;; themes
+(load-theme 'zenburn t)
 
 ;; magit mode
 ;(setq magit-ediff-dwim-show-on-hunks nil)
@@ -54,22 +48,20 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer) ;; Better buffer management
 
 ;; Set up a file backup directory
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups"))
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups/"))
       backup-by-copying t    ;; Avoid symlinks
       version-control t      ;; Use version numbers on backups
       delete-old-versions t  ;; Delete excess backups
       kept-new-versions 20
       kept-old-versions 5)
+;; Set up a file autosave directory
+(defvar my-auto-save-folder (concat "~/.emacs.d/auto-save/")); folder for auto-saves
+(setq auto-save-list-file-prefix "~/.emacs.d/auto-save/.saves-"); set prefix for auto-saves 
+(setq auto-save-file-name-transforms `((".*" ,my-auto-save-folder t))); location for all auto-save files
+(setq tramp-auto-save-directory my-auto-save-folder); auto-save tramp files in local directory
 
 ;; company-mode
 (add-hook 'after-init-hook 'global-company-mode)
-
-;; == irony-mode == delete
-;;(add-hook 'c++-mode-hook 'irony-mode)
-;;(add-hook 'c-mode-hook 'irony-mode)
-;;(add-hook 'objc-mode-hook 'irony-mode)
-
-;;(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 ;; lsp-mode
 (setq lsp-keymap-prefix "s-j")
@@ -88,11 +80,6 @@
   (push '("[-]" . "❍" ) prettify-symbols-alist)
   (prettify-symbols-mode)))
 
-;; org-mode src blocks
-(org-babel-do-load-languages
- 'org-babel-load-languages '((python . t) (C . t)))
-
-
 ;; compilation 文字化け
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
@@ -104,7 +91,7 @@
 ;; (setq make-backup-files nil)
 
 ;; windows move
-;(windmove-default-keybindings)
+(windmove-default-keybindings)
 
 
 (defun my-vterm-custom-buffer-name (name)
@@ -127,12 +114,11 @@
 (global-set-key (kbd "C->") 'indent-rigidly-right-to-tab-stop)
 (global-set-key (kbd "C-<") 'indent-rigidly-left-to-tab-stop)
 
-
 ;;; C++ IDE
 
 ;; sample `helm' configuration use https://github.com/emacs-helm/helm/ for details
 
-(require 'helm-xref)
+(require 'helm)
 (define-key global-map [remap find-file] #'helm-find-files)
 (define-key global-map [remap execute-extended-command] #'helm-M-x)
 (define-key global-map [remap switch-to-buffer] #'helm-mini)
@@ -140,6 +126,7 @@
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-z") 'helm-select-action)
+;(define-key helm-map (kbd "C-c >") 'helm-toggle-truncate-line)
 (helm-mode 1)
 
 
@@ -159,8 +146,30 @@
   (require 'dap-cpptools)
   (yas-global-mode))
 
+;; org-mode src blocks
+(setq org-babel-python-command "python3")
+(org-babel-do-load-languages
+ 'org-babel-load-languages '((python . t) (C . t) (shell . t)))
 
-;; (global-ede-mode t)
+;; display buffer at bottom
+(setq display-buffer-alist
+      '(("\\*xref\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window)))
+        ("\\*Org Agenda\\*" . ((display-buffer-at-bottom)))))
+
+;; font
+(defun my-better-hybird-font ()
+  ;; 设置混合字体
+  (dolist (param '(
+                   (font . "JetBrains Maple Mono")
+                   ))
+    (add-to-list 'default-frame-alist param)
+    (add-to-list 'initial-frame-alist param)
+    ))
+
+(my-better-hybird-font)
+
+;; restart with saved buffer
+(desktop-save-mode 1)
 ;;; End of init.el
 
 
