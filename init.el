@@ -17,7 +17,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/project/document/alpine.org"))
- '(package-selected-packages nil))
+  '(package-selected-packages
+   '(avy company flycheck lsp-mode magit helm zenburn-theme
+	 projectile vterm yasnippet)))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -157,16 +159,16 @@
         ("\\*Org Agenda\\*" . ((display-buffer-at-bottom)))))
 
 ;; font
-(defun my-better-hybird-font ()
-  ;; 设置混合字体
-  (dolist (param '(
-                   (font . "JetBrains Maple Mono")
-                   ))
-    (add-to-list 'default-frame-alist param)
-    (add-to-list 'initial-frame-alist param)
-    ))
+;; (defun my-better-hybird-font ()
+;;   ;; 设置混合字体
+;;   (dolist (param '(
+;;                    (font . "JetBrains Mono")
+;;                    ))
+;;     (add-to-list 'default-frame-alist param)
+;;     (add-to-list 'initial-frame-alist param)
+;;     ))
 
-(my-better-hybird-font)
+;; (my-better-hybird-font)
 
 ;; restart with saved buffer
 (desktop-save-mode 1)
