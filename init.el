@@ -158,11 +158,15 @@
       '(("\\*xref\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window)))
         ("\\*Org Agenda\\*" . ((display-buffer-at-bottom)))))
 
+;; set time clock
+
+(setq display-time-format "%H:%M:%S")
+
 ;; font
 ;; (defun my-better-hybird-font ()
 ;;   ;; 设置混合字体
 ;;   (dolist (param '(
-;;                    (font . "JetBrains Mono")
+;;                    (font . "Noto Sans JP")
 ;;                    ))
 ;;     (add-to-list 'default-frame-alist param)
 ;;     (add-to-list 'initial-frame-alist param)
