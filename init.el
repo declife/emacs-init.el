@@ -159,8 +159,22 @@
         ("\\*Org Agenda\\*" . ((display-buffer-at-bottom)))))
 
 ;; set time clock
+;(setq display-time-format "%H:%M:%S")
+(setq display-time-format "%a %m/%d, %H:%M:%S")
+;; (setq-default mode-line-format
+;;               (list
+;;                '(:eval (format-time-string "%a %m/%d, %H:%M:%S"))))
+(setq display-time-interval 1)
+(setq display-time-default-load-average nil)
+(defun display-time-bottom-right ()
+  (and (equal (cddr (window-pixel-edges))
+              (cddr (window-pixel-edges (frame-root-window))))
+       '(#(" " 0 1 (display (space :align-to (- right 19))))
+         display-time-string)))
+(display-time-mode)
 
-(setq display-time-format "%H:%M:%S")
+(setq global-mode-string '(:eval (display-time-bottom-right)))
+
 
 ;; font
 ;; (defun my-better-hybird-font ()
