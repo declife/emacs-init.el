@@ -44,7 +44,7 @@
 ;; General settings
 (setq inhibit-startup-message t)       ;; Disable the startup message
 (tool-bar-mode -1)                     ;; Disable the toolbar
-;;(menu-bar-mode -1)                     ;; Disable the menu bar
+(menu-bar-mode -1)                     ;; Disable the menu bar
 (scroll-bar-mode -1)                   ;; Disable the scroll bar
 (global-display-line-numbers-mode t)   ;; Show line numbers
 (global-set-key (kbd "C-x C-b") 'ibuffer) ;; Better buffer management
@@ -156,24 +156,25 @@
 ;; display buffer at bottom
 (setq display-buffer-alist
       '(("\\*xref\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window)))
+	("\\*grep\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window)))
         ("\\*Org Agenda\\*" . ((display-buffer-at-bottom)))))
 
 ;; set time clock
-;(setq display-time-format "%H:%M:%S")
-(setq display-time-format "%a %m/%d, %H:%M:%S")
-;; (setq-default mode-line-format
-;;               (list
-;;                '(:eval (format-time-string "%a %m/%d, %H:%M:%S"))))
-(setq display-time-interval 1)
-(setq display-time-default-load-average nil)
-(defun display-time-bottom-right ()
-  (and (equal (cddr (window-pixel-edges))
-              (cddr (window-pixel-edges (frame-root-window))))
-       '(#(" " 0 1 (display (space :align-to (- right 19))))
-         display-time-string)))
-(display-time-mode)
 
-(setq global-mode-string '(:eval (display-time-bottom-right)))
+;; (setq display-time-format "%a %m/%d, %H:%M:%S")
+;; (setq display-time-interval 1)
+;; (setq display-time-default-load-average nil)
+;; (display-time-mode 1)
+
+;; (defun display-time-bottom-right ()
+;;   ;; なるほどですね だからcddr.
+;;   (and (equal (cddr (window-pixel-edges))
+;;               (cddr (window-pixel-edges (frame-root-window))))
+;;        '(#(" " 0 1 (display (space :align-to (- right 19))))
+;;          display-time-string)))
+
+
+;; (setq global-mode-string '(:eval (display-time-bottom-right)))
 
 
 ;; font
@@ -181,8 +182,8 @@
 ;;   ;; 设置混合字体
 ;;   (dolist (param '(
 ;;                    (font . "Noto Sans JP")
-;;                    ))
 ;;     (add-to-list 'default-frame-alist param)
+;;                    ))
 ;;     (add-to-list 'initial-frame-alist param)
 ;;     ))
 
