@@ -1,6 +1,5 @@
 ;;; Start of init.el
 
-
 ;;Set up package management
 (require 'package)
 
