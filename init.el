@@ -1,4 +1,4 @@
-;;; Start of init.el
+;;; Start of init.el  -*- lexical-binding: t; -*-
 
 ;;Set up package management
 (require 'package)
@@ -17,7 +17,7 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/project/document/alpine.org"))
  '(package-selected-packages
-   '(avy company dap-mode flycheck helm lsp-mode lsp-treemacs magit helm-lsp
+   '(avy company flycheck helm lsp-mode lsp-treemacs magit helm-lsp
 	 projectile vterm yasnippet zenburn-theme)))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
@@ -65,7 +65,7 @@
 (add-hook 'after-init-hook 'global-company-mode)
 
 ;; lsp-mode
-(setq lsp-keymap-prefix "s-j")
+;(setq lsp-keymap-prefix "s-j")
 ;; org-mode
 ;; org-agenda
 (setq org-agenda-files '("~/project/document/org")
@@ -112,8 +112,13 @@
 (setq python-shell-interpreter "python3")
 
 ;; indent
-(global-set-key (kbd "C->") 'indent-rigidly-right-to-tab-stop)
-(global-set-key (kbd "C-<") 'indent-rigidly-left-to-tab-stop)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+
+;; i-search lazy-count
+(setq isearch-lazy-count t)
+(setq lazy-count-prefix-format nil)
+(setq lazy-count-suffix-format "   (%s/%s)")
 
 ;;; C++ IDE
 
@@ -131,21 +136,22 @@
 (helm-mode 1)
 
 
-(which-key-mode)
-(add-hook 'c-mode-hook 'lsp)
-(add-hook 'c++-mode-hook 'lsp)
+;; (which-key-mode)
+;; (add-hook 'c-mode-hook 'lsp)
+;; (add-hook 'c++-mode-hook 'lsp)
 
 (setq gc-cons-threshold (* 100 1024 1024)
       read-process-output-max (* 1024 1024)
       treemacs-space-between-root-nodes nil
       company-idle-delay 0.0
       company-minimum-prefix-length 1
-      lsp-idle-delay 0.1)  ;; clangd is fast
+      ;; lsp-idle-delay 0.1
+      )  ;; clangd is fast
 
-(with-eval-after-load 'lsp-mode
-  (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-  (require 'dap-cpptools)
-  (yas-global-mode))
+;; (with-eval-after-load 'lsp-mode
+;;   (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+;;   (require 'dap-cpptools)
+;;   (yas-global-mode))
 
 ;; org-mode src blocks
 (setq org-babel-python-command "python3")
@@ -190,6 +196,40 @@
 
 ;; restart with saved buffer
 (desktop-save-mode 1)
+
+
+;; ;; ycmd
+
+;; ;;; Googlers can replace a lot of this with (require 'google-ycmd).
+
+;; (require 'ycmd)
+;; (require 'company-ycmd)
+;; (require 'flycheck-ycmd)
+
+;; (company-ycmd-setup)
+;; (flycheck-ycmd-setup)
+
+;; ;; Show completions after 0.15 seconds
+;; (setq company-idle-delay 0.15)
+
+;; ;; Activate for editing C++ files
+;; (add-hook 'c++-mode-hook 'ycmd-mode)
+;; (add-hook 'c++-mode-hook 'company-mode)
+;; (add-hook 'c++-mode-hook 'flycheck-mode)
+
+;; ;; Replace the directory information with where you downloaded ycmd to
+;; (set-variable 'ycmd-server-command (list "python3" (substitute-in-file-name "/home/liu/dev/ycmd/YouCompleteMe/third_party/ycmd/ycmd/__main__.py")))
+
+;; ;; Edit according to where you have your Chromium/Blink checkout
+;; (add-to-list 'ycmd-extra-conf-whitelist (substitute-in-file-name "$HOME/project/nfbe132/.ycm_extra_conf.py"))
+
+;; ;; Show flycheck errors in idle-mode as well
+;; (setq ycmd-parse-conditions '(save new-line mode-enabled idle-change))
+
+;; ;; Makes emacs-ycmd less verbose
+;; (setq url-show-status nil)
+
+
 ;;; End of init.el
 
 
@@ -198,3 +238,4 @@
 
 
 
+(put 'magit-clean 'disabled nil)
