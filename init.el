@@ -10,6 +10,14 @@
                          ("gnu" . "https://elpa.gnu.org/packages/")))
 (package-initialize)
 
+;;; Analyze Emacs startup performance
+;; (use-package benchmark-init
+;;   :ensure t
+;;   :init (benchmark-init/activate)
+;;   :hook (after-init . benchmark-init/deactivate))
+
+;;helm-lsp lsp-mode lsp-treemacs
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -17,8 +25,8 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/project/document/alpine.org"))
  '(package-selected-packages
-   '(avy company flycheck helm lsp-mode lsp-treemacs magit helm-lsp
-	 projectile vterm yasnippet zenburn-theme)))
+   '(avy company flycheck helm magit mozc projectile vterm yasnippet
+         zenburn-theme)))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -46,6 +54,7 @@
 (menu-bar-mode -1)                     ;; Disable the menu bar
 (scroll-bar-mode -1)                   ;; Disable the scroll bar
 (global-display-line-numbers-mode t)   ;; Show line numbers
+(setq column-number-mode t)   ;; Show colume numbers
 (global-set-key (kbd "C-x C-b") 'ibuffer) ;; Better buffer management
 
 ;; Set up a file backup directory
@@ -64,14 +73,17 @@
 ;; company-mode
 (add-hook 'after-init-hook 'global-company-mode)
 
-;; lsp-mode
-;(setq lsp-keymap-prefix "s-j")
 ;; org-mode
 ;; org-agenda
 (setq org-agenda-files '("~/project/document/org")
       org-agenda-include-diary t
       )
 (global-set-key (kbd "C-c a") 'org-agenda)
+;; disable pairing of < and > in org-mode src blocks
+(add-hook 'org-mode-hook
+          (lambda ()
+            (modify-syntax-entry ?< ".")
+            (modify-syntax-entry ?> ".")))
 
 ;; set checkbox
 (add-hook 'org-mode-hook (lambda ()
@@ -88,23 +100,8 @@
     (ansi-color-apply-on-region (point-min) (point-max))))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-;; disable backup files
-;; (setq make-backup-files nil)
-
 ;; windows move
 (windmove-default-keybindings)
-
-
-(defun my-vterm-custom-buffer-name (name)
-  "Open a new vterm buffer with a specified NAME."
-  (interactive "sEnter buffer name: ")
-  (let ((buffer (get-buffer-create (concat "*VTERM-" name "*"))))
-    (with-current-buffer buffer
-      (unless (derived-mode-p 'vterm-mode)
-        (vterm-mode)))
-    (switch-to-buffer buffer)))
-(global-set-key (kbd "s-t") 'my-vterm-custom-buffer-name)
-
 
 ;; python mode
 (setq major-mode-remap-alist
@@ -121,6 +118,16 @@
 (setq lazy-count-suffix-format "   (%s/%s)")
 
 ;;; C++ IDE
+(which-key-mode)
+;; (add-hook 'c-mode-hook 'lsp)
+;; (add-hook 'c++-mode-hook 'lsp)
+(defun chromium-c++-mode-hook ()
+  (setq c-basic-offset 2)     ;; indentation width
+  (setq indent-tabs-mode nil) ;;
+  (c-set-offset 'case-label 2);; indent case labels by 2 spaces
+  (c-set-offset 'innamespace 0))
+
+(add-hook 'c++-mode-hook 'chromium-c++-mode-hook)
 
 ;; sample `helm' configuration use https://github.com/emacs-helm/helm/ for details
 
@@ -136,22 +143,12 @@
 (helm-mode 1)
 
 
-;; (which-key-mode)
-;; (add-hook 'c-mode-hook 'lsp)
-;; (add-hook 'c++-mode-hook 'lsp)
-
 (setq gc-cons-threshold (* 100 1024 1024)
       read-process-output-max (* 1024 1024)
       treemacs-space-between-root-nodes nil
       company-idle-delay 0.0
       company-minimum-prefix-length 1
-      ;; lsp-idle-delay 0.1
       )  ;; clangd is fast
-
-;; (with-eval-after-load 'lsp-mode
-;;   (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-;;   (require 'dap-cpptools)
-;;   (yas-global-mode))
 
 ;; org-mode src blocks
 (setq org-babel-python-command "python3")
@@ -166,20 +163,20 @@
 
 ;; set time clock
 
-;; (setq display-time-format "%a %m/%d, %H:%M:%S")
-;; (setq display-time-interval 1)
-;; (setq display-time-default-load-average nil)
-;; (display-time-mode 1)
+(setq display-time-format "%a %m/%d, %H:%M:%S")
+(setq display-time-interval 1)
+(setq display-time-default-load-average nil)
+(display-time-mode 1)
 
-;; (defun display-time-bottom-right ()
-;;   ;; なるほどですね だからcddr.
-;;   (and (equal (cddr (window-pixel-edges))
-;;               (cddr (window-pixel-edges (frame-root-window))))
-;;        '(#(" " 0 1 (display (space :align-to (- right 19))))
-;;          display-time-string)))
+(defun display-time-bottom-right ()
+  ;; なるほどですね だからcddr.
+  (and (equal (cddr (window-pixel-edges))
+              (cddr (window-pixel-edges (frame-root-window))))
+       '(#(" " 0 1 (display (space :align-to (- right 20))))
+         display-time-string)))
 
 
-;; (setq global-mode-string '(:eval (display-time-bottom-right)))
+(setq global-mode-string '(:eval (display-time-bottom-right)))
 
 
 ;; font
@@ -196,46 +193,7 @@
 
 ;; restart with saved buffer
 (desktop-save-mode 1)
-
-
-;; ;; ycmd
-
-;; ;;; Googlers can replace a lot of this with (require 'google-ycmd).
-
-;; (require 'ycmd)
-;; (require 'company-ycmd)
-;; (require 'flycheck-ycmd)
-
-;; (company-ycmd-setup)
-;; (flycheck-ycmd-setup)
-
-;; ;; Show completions after 0.15 seconds
-;; (setq company-idle-delay 0.15)
-
-;; ;; Activate for editing C++ files
-;; (add-hook 'c++-mode-hook 'ycmd-mode)
-;; (add-hook 'c++-mode-hook 'company-mode)
-;; (add-hook 'c++-mode-hook 'flycheck-mode)
-
-;; ;; Replace the directory information with where you downloaded ycmd to
-;; (set-variable 'ycmd-server-command (list "python3" (substitute-in-file-name "/home/liu/dev/ycmd/YouCompleteMe/third_party/ycmd/ycmd/__main__.py")))
-
-;; ;; Edit according to where you have your Chromium/Blink checkout
-;; (add-to-list 'ycmd-extra-conf-whitelist (substitute-in-file-name "$HOME/project/nfbe132/.ycm_extra_conf.py"))
-
-;; ;; Show flycheck errors in idle-mode as well
-;; (setq ycmd-parse-conditions '(save new-line mode-enabled idle-change))
-
-;; ;; Makes emacs-ycmd less verbose
-;; (setq url-show-status nil)
-
-
-;;; End of init.el
-
-
-
-
-
+;; (setq desktop-load-restore-eager 0)
 
 
 (put 'magit-clean 'disabled nil)
