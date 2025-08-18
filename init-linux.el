@@ -1,0 +1,267 @@
+;;; Start of init.el  -*- lexical-binding: t; -*-
+
+;;Set up package management
+(require 'package)
+
+;;; code:
+
+;;package
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("gnu" . "https://elpa.gnu.org/packages/")))
+(package-initialize)
+
+;;; Analyze Emacs startup performance
+;; (use-package benchmark-init
+;;   :ensure t
+;;   :init (benchmark-init/activate)
+;;   :hook (after-init . benchmark-init/deactivate))
+
+;;helm-lsp lsp-mode lsp-treemacs
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-agenda-files '("~/project/document/alpine.org"))
+ '(package-selected-packages
+   '(company consult flycheck gt magit orderless projectile vertico vterm
+             zenburn-theme)))
+
+(when (cl-find-if-not #'package-installed-p package-selected-packages)
+  (package-refresh-contents)
+  (mapc #'package-install package-selected-packages))
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+;; themes
+(load-theme 'zenburn t)
+
+;; magit mode
+;(setq magit-ediff-dwim-show-on-hunks nil)
+(setq ediff-split-window-function 'split-window-vertically)
+(setq ediff-merge-split-window-function 'split-window-vertically)
+
+
+;;; General settings
+(setq inhibit-startup-message t)       ;; Disable the startup message
+(tool-bar-mode -1)                     ;; Disable the toolbar
+(menu-bar-mode -1)                     ;; Disable the menu bar
+(scroll-bar-mode -1)                   ;; Disable the scroll bar
+(global-display-line-numbers-mode t)   ;; Show line numbers
+(setq column-number-mode t)   ;; Show colume numbers
+(global-set-key (kbd "C-x C-b") 'ibuffer) ;; Better buffer management
+
+;; Set up a file backup directory
+(setq backup-directory-alist '(("." . "~/.emacs.d/backups/"))
+      backup-by-copying t    ;; Avoid symlinks
+      version-control t      ;; Use version numbers on backups
+      delete-old-versions t  ;; Delete excess backups
+      kept-new-versions 20
+      kept-old-versions 5)
+;; Set up a file autosave directory
+(defvar my-auto-save-folder (concat "~/.emacs.d/auto-save/")); folder for auto-saves
+(setq auto-save-list-file-prefix "~/.emacs.d/auto-save/.saves-"); set prefix for auto-saves 
+(setq auto-save-file-name-transforms `((".*" ,my-auto-save-folder t))); location for all auto-save files
+(setq tramp-auto-save-directory my-auto-save-folder); auto-save tramp files in local directory
+
+;; display buffer at bottom
+(setq display-buffer-alist
+      '(("\\*xref\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window)))
+	("\\*grep\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window)))
+        ("\\*Org Agenda\\*" . ((display-buffer-at-bottom)))))
+
+;; set time clock
+
+(setq display-time-format "%a %m/%d, %H:%M:%S")
+(setq display-time-interval 1)
+(setq display-time-default-load-average nil)
+(display-time-mode 1)
+
+(defun display-time-bottom-right ()
+  ;; なるほどですね だからcddr.
+  (and (equal (cddr (window-pixel-edges))
+              (cddr (window-pixel-edges (frame-root-window))))
+       '(#(" " 0 1 (display (space :align-to (- right 20))))
+         display-time-string)))
+
+
+(setq global-mode-string '(:eval (display-time-bottom-right)))
+
+
+;; font
+;; (defun my-better-hybird-font ()
+;;   ;; 设置混合字体
+;;   (dolist (param '(
+;;                    (font . "Noto Sans JP")
+;;     (add-to-list 'default-frame-alist param)
+;;                    ))
+;;     (add-to-list 'initial-frame-alist param)
+;;     ))
+
+;; (my-better-hybird-font)
+
+;; restart with saved buffer
+(desktop-save-mode 1)
+(setq desktop-load-restore-eager 5)
+
+
+;; company-mode
+(add-hook 'after-init-hook 'global-company-mode)
+
+;; org-mode
+;; org-agenda
+(setq org-agenda-files '("~/project/document/org")
+      org-agenda-include-diary t
+      )
+(global-set-key (kbd "C-c a") 'org-agenda)
+;; disable pairing of < and > in org-mode src blocks
+(add-hook 'org-mode-hook
+          (lambda ()
+            (modify-syntax-entry ?< ".")
+            (modify-syntax-entry ?> ".")))
+
+;; set checkbox
+(add-hook 'org-mode-hook (lambda ()
+  "Beautify Org Checkbox Symbol"
+  (push '("[ ]" . "☐") prettify-symbols-alist)
+  (push '("[X]" . "☑" ) prettify-symbols-alist)
+  (push '("[-]" . "❍" ) prettify-symbols-alist)
+  (prettify-symbols-mode)))
+
+;; src blocks
+(setq org-babel-python-command "python3")
+(org-babel-do-load-languages
+ 'org-babel-load-languages '((python . t) (C . t) (shell . t)))
+
+;; compilation 文字化け
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region (point-min) (point-max))))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+;; windows move
+(windmove-default-keybindings)
+
+;; python mode
+(setq major-mode-remap-alist
+      '((python-mode . python-ts-mode)))
+(setq python-shell-interpreter "python3")
+
+;; indent
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+
+;; i-search lazy-count
+(setq isearch-lazy-count t)
+(setq lazy-count-prefix-format nil)
+(setq lazy-count-suffix-format "   (%s/%s)")
+
+;;; C++ IDE
+(which-key-mode)
+;; (add-hook 'c-mode-hook 'lsp)
+;; (add-hook 'c++-mode-hook 'lsp)
+(defun chromium-c++-mode-hook ()
+  (setq c-basic-offset 2)     ;; indentation width
+  (setq indent-tabs-mode nil) ;;
+  (c-set-offset 'case-label 2);; indent case labels by 2 spaces
+  (c-set-offset 'innamespace 0))
+
+(add-hook 'c++-mode-hook 'chromium-c++-mode-hook)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                         consult orderless vertico start                                  ;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Enable Vertico.
+(use-package vertico
+  :init
+  (vertico-mode)  
+  :custom
+  (vertico-scroll-margin 0) ;; Different scroll margin
+  (vertico-count 20) ;; Show more candidates
+  (vertico-count-format '("[%2s] " . "%s/%s"))
+  (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
+  ;; (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+  :config)
+
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; Emacs minibuffer configurations.
+(use-package emacs
+  :custom
+  ;; Enable context menu. `vertico-multiform-mode' adds a menu in the minibuffer
+  ;; to switch display modes.
+  (context-menu-mode t)
+  ;; Support opening new minibuffers from inside existing minibuffers.
+  (enable-recursive-minibuffers t)
+  ;; Hide commands in M-x which do not work in the current mode.  Vertico
+  ;; commands are hidden in normal buffers. This setting is useful beyond
+  ;; Vertico.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Do not allow the cursor in the minibuffer prompt
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt)))
+
+;; Optionally use the `orderless' completion style.
+(use-package orderless
+  :custom
+  ;; Configure a custom style dispatcher (see the Consult wiki)
+  ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
+  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
+
+;; consult
+(use-package consult
+  :ensure t
+  :bind
+  (;; shortcut
+;;   ("C-s" . consult-line)             ;; search in current buffer
+   ("C-M-l" . consult-imenu)          ;; jump to function markup
+   ("M-y" . consult-yank-pop)         ;; key-ring
+   ("C-c h" . consult-history)        ;; minibuffer history
+   ("C-c m" . consult-mode-command)   ;; command list of current major-mode
+   ("C-c f" . consult-fd)             ;; fd
+   ("C-c g" . consult-ripgrep)        ;; ripgrep
+   )
+  :hook
+  (completion-list-mode . consult-preview-at-point-mode) ;; preview support
+  :init
+  ;; obtain project root
+  (setq consult-project-root-function
+        (lambda ()
+          (when-let* (project (project-current))
+            (car (project-roots project)))))
+  :custom
+  (consult-preview-key "C-<return>") ;; preview manually M-.
+  )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;                          consult orderless vertico end                                   ;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; translate
+(use-package gt
+  :ensure t
+  :config
+  (setq gt-default-translator
+        (gt-translator
+         :taker (gt-taker :langs '(en zh))
+         :engines (list (gt-google-engine))
+         :render (gt-buffer-render)))
+  (setq display-buffer-alist
+        '(("\\*gt-result\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window))))))
+
+(global-set-key (kbd "C-c t") 'gt-translate)
+;;; end of init
