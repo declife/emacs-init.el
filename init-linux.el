@@ -25,8 +25,8 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/project/document/alpine.org"))
  '(package-selected-packages
-   '(company consult flycheck gt magit orderless projectile vertico vterm
-             zenburn-theme)))
+   '(company consult flycheck gt magit modus-themes orderless projectile
+             vertico vterm zenburn-theme)))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -39,8 +39,9 @@
  ;; If there is more than one, they won't work right.
  )
 
-;; themes
+;;; themes
 (load-theme 'zenburn t)
+;;(load-theme 'modus-operandi-tinted t)
 
 ;; magit mode
 ;(setq magit-ediff-dwim-show-on-hunks nil)
