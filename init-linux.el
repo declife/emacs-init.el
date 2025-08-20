@@ -257,11 +257,13 @@
   :config
   (setq gt-default-translator
         (gt-translator
-         :taker (gt-taker :langs '(en zh))
+         :taker (gt-taker :langs '(en zh ja))
          :engines (list (gt-google-engine))
          :render (gt-buffer-render)))
-  (setq display-buffer-alist
-        '(("\\*gt-result\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window))))))
+  (setq gt-polyglot-p t)
+  ;; (setq display-buffer-alist
+  ;;       '(("\\*gt-result\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window)))))
+  )
 
 (global-set-key (kbd "C-c t") 'gt-translate)
 ;;; end of init
