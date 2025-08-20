@@ -41,6 +41,7 @@
 
 ;;; themes
 (load-theme 'zenburn t)
+
 ;;(load-theme 'modus-operandi-tinted t)
 
 ;; magit mode
@@ -189,7 +190,14 @@
   (vertico-count-format '("[%2s] " . "%s/%s"))
   (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
   ;; (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
-  :config)
+  :config
+  (with-eval-after-load 'zenburn-theme
+    (set-face-attribute 'vertico-current nil
+                        :background "#5e5e5c"
+                        :extend t
+                        :box '(:line-width -1 :color "#888888")
+                        :underline nil))
+  )
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
@@ -210,7 +218,8 @@
   (read-extended-command-predicate #'command-completion-default-include-p)
   ;; Do not allow the cursor in the minibuffer prompt
   (minibuffer-prompt-properties
-   '(read-only t cursor-intangible t face minibuffer-prompt)))
+   '(read-only t cursor-intangible t face minibuffer-prompt))
+  )
 
 ;; Optionally use the `orderless' completion style.
 (use-package orderless
