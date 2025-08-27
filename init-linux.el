@@ -46,8 +46,8 @@
 
 ;; magit mode
 ;(setq magit-ediff-dwim-show-on-hunks nil)
-(setq ediff-split-window-function 'split-window-vertically)
-(setq ediff-merge-split-window-function 'split-window-vertically)
+(setq ediff-split-window-function 'split-window-horizontally)
+(setq ediff-merge-split-window-function 'split-window-horizontally)
 
 
 ;;; General settings
@@ -165,10 +165,10 @@
 (setq lazy-count-prefix-format nil)
 (setq lazy-count-suffix-format "   (%s/%s)")
 
-;;; C++ IDE
 (which-key-mode)
-;; (add-hook 'c-mode-hook 'lsp)
-;; (add-hook 'c++-mode-hook 'lsp)
+
+(global-set-key (kbd "C-c o") 'ff-find-other-file)
+;;; C++ IDE
 (defun chromium-c++-mode-hook ()
   (setq c-basic-offset 2)     ;; indentation width
   (setq indent-tabs-mode nil) ;;
@@ -269,7 +269,9 @@
         (gt-translator
          :taker (gt-taker :langs '(en zh ja))
          :engines (list (gt-google-engine))
-         :render (gt-buffer-render)))
+         :render (gt-buffer-render
+                  :dislike-header t
+                  )))
   (setq gt-polyglot-p t)
   ;; (setq display-buffer-alist
   ;;       '(("\\*gt-result\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window)))))
