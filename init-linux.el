@@ -95,22 +95,30 @@
 
 (setq global-mode-string '(:eval (display-time-bottom-right)))
 
-
-;; font
-;; (defun my-better-hybird-font ()
-;;   ;; 设置混合字体
-;;   (dolist (param '(
-;;                    (font . "Noto Sans JP")
-;;     (add-to-list 'default-frame-alist param)
-;;                    ))
-;;     (add-to-list 'initial-frame-alist param)
-;;     ))
-
-;; (my-better-hybird-font)
-
+;;; desktop save mode
 ;; restart with saved buffer
 (desktop-save-mode 1)
-(setq desktop-load-restore-eager 5)
+
+;; optimize desktop performance
+(setq desktop-restore-eager 5          ;; immediately restore the previous 5 buffers
+      desktop-lazy-idle-delay 1        ;; load other buffers after 1s
+      desktop-lazy-verbose nil         ;; not show lazy load info
+      desktop-load-locked-desktop t)   ;; allow to load locked desktop
+
+; exclude non-need buffer type
+(add-to-list 'desktop-modes-not-to-save 'dired-mode)
+(add-to-list 'desktop-modes-not-to-save 'Info-mode)
+(add-to-list 'desktop-modes-not-to-save 'info-lookup-mode)
+(add-to-list 'desktop-modes-not-to-save 'fundamental-mode)
+
+; exclude buffer of special name
+(setq desktop-buffers-not-to-save
+      (concat "\\("
+              "^nn\\.a[0-9]+\\|"         ;; Gnus
+              "^tags\\|"                 ;; tags文件
+              "^TAGS\\|"                 ;; TAGS文件
+              "\\*.*\\*"                 ;; 所有*开头结尾的临时buffer
+              "\\)$"))
 
 
 ;; company-mode
