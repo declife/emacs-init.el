@@ -86,7 +86,6 @@
 (display-time-mode 1)
 
 (defun display-time-bottom-right ()
-  ;; なるほどですね だからcddr.
   (and (equal (cddr (window-pixel-edges))
               (cddr (window-pixel-edges (frame-root-window))))
        '(#(" " 0 1 (display (space :align-to (- right 20))))
@@ -115,9 +114,9 @@
 (setq desktop-buffers-not-to-save
       (concat "\\("
               "^nn\\.a[0-9]+\\|"         ;; Gnus
-              "^tags\\|"                 ;; tags文件
-              "^TAGS\\|"                 ;; TAGS文件
-              "\\*.*\\*"                 ;; 所有*开头结尾的临时buffer
+              "^tags\\|"                 ;; tags files
+              "^TAGS\\|"                 ;; TAGS files
+              "\\*.*\\*"                 ;; all temporary buffers named with surrounding asterisks
               "\\)$"))
 
 
