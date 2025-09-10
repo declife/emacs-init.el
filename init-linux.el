@@ -25,8 +25,9 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/project/document/alpine.org"))
  '(package-selected-packages
-   '(company consult flycheck gt magit modus-themes orderless projectile
-             vertico vterm zenburn-theme)))
+   '(company consult doom-modeline flycheck gt magit marginalia
+             modus-themes orderless projectile vertico vterm
+             zenburn-theme)))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -85,14 +86,14 @@
 (setq display-time-default-load-average nil)
 (display-time-mode 1)
 
-(defun display-time-bottom-right ()
-  (and (equal (cddr (window-pixel-edges))
-              (cddr (window-pixel-edges (frame-root-window))))
-       '(#(" " 0 1 (display (space :align-to (- right 20))))
-         display-time-string)))
+;; (defun display-time-bottom-right ()
+;;   (and (equal (cddr (window-pixel-edges))
+;;               (cddr (window-pixel-edges (frame-root-window))))
+;;        '(#(" " 0 1 (display (space :align-to (- right 20))))
+;;          display-time-string)))
 
 
-(setq global-mode-string '(:eval (display-time-bottom-right)))
+;; (setq global-mode-string '(:eval (display-time-bottom-right)))
 
 ;;; desktop save mode
 ;; restart with saved buffer
@@ -185,7 +186,7 @@
 (add-hook 'c++-mode-hook 'chromium-c++-mode-hook)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                         consult orderless vertico start                                  ;; 
+;;                        minibuffer and search(find/grep)                                  ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Enable Vertico.
 (use-package vertico
@@ -205,6 +206,12 @@
                         :box '(:line-width -1 :color "#888888")
                         :underline nil))
   )
+
+;; marginalia file information
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode 1))
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
 (use-package savehist
@@ -263,9 +270,8 @@
   (consult-preview-key "C-<return>") ;; preview manually M-.
   )
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                          consult orderless vertico end                                   ;; 
+;;                          minibuffer and search(find/grep)                                ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; translate
@@ -285,4 +291,18 @@
   )
 
 (global-set-key (kbd "C-c t") 'gt-translate)
+
+
+
+;;; doom modeline
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+  :config
+;;(setq doom-modeline-minor-modes t)
+  (setq doom-modeline-buffer-file-name-style 'relative-from-project)
+  (setq doom-modeline-buffer-encoding t)
+  (setq doom-modeline-time t)
+  (setq doom-modeline-vcs t))
+
 ;;; end of init
