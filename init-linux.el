@@ -292,14 +292,13 @@
 
 (global-set-key (kbd "C-c t") 'gt-translate)
 
-
-
 ;;; doom modeline
 (use-package doom-modeline
   :ensure t
   :init (doom-modeline-mode 1)
   :config
-;;(setq doom-modeline-minor-modes t)
+  ;;(setq doom-modeline-minor-modes t)
+  (setq doom-modeline-vcs-max-length 20)
   (setq doom-modeline-buffer-file-name-style 'relative-from-project)
   (setq doom-modeline-buffer-encoding t)
   (setq doom-modeline-time t)
