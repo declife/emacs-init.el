@@ -16,18 +16,13 @@
 ;;   :init (benchmark-init/activate)
 ;;   :hook (after-init . benchmark-init/deactivate))
 
-;;helm-lsp lsp-mode lsp-treemacs
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/project/document/alpine.org"))
- '(package-selected-packages
-   '(company consult doom-modeline flycheck gt magit marginalia
-             modus-themes orderless projectile vertico vterm
-             zenburn-theme)))
+ '(package-selected-packages nil))
 
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -81,7 +76,7 @@
 
 ;; set time clock
 
-(setq display-time-format "%a %m/%d, %H:%M:%S")
+(setq display-time-format "%H:%M:%S, %a %m/%d")
 (setq display-time-interval 1)
 (setq display-time-default-load-average nil)
 (display-time-mode 1)
@@ -299,7 +294,8 @@
   :config
   ;;(setq doom-modeline-minor-modes t)
   (setq doom-modeline-vcs-max-length 20)
-  (setq doom-modeline-buffer-file-name-style 'relative-from-project)
+  ;; (setq doom-modeline-buffer-file-name-style 'relative-from-project)
+  (setq doom-modeline-buffer-file-name-style 'truncate-from-project)
   (setq doom-modeline-buffer-encoding t)
   (setq doom-modeline-time t)
   (setq doom-modeline-vcs t))
