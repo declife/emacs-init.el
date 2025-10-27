@@ -22,8 +22,10 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/project/document/alpine.org"))
- '(package-selected-packages nil))
-
+ '(package-selected-packages
+   '(company consult doom-modeline flycheck gt magit marginalia
+             modus-themes orderless projectile vertico vterm
+             zenburn-theme)))
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
@@ -192,8 +194,13 @@
   (vertico-count 20) ;; Show more candidates
   (vertico-count-format '("[%2s] " . "%s/%s"))
   (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
+  (vertico-group-format "%s")
   ;; (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
   :config
+  (set-face-attribute 'vertico-group-title nil
+                      :underline t
+                      :weight 'normal
+                      :background nil)
   (with-eval-after-load 'zenburn-theme
     (set-face-attribute 'vertico-current nil
                         :background "#5e5e5c"
@@ -201,7 +208,6 @@
                         :box '(:line-width -1 :color "#888888")
                         :underline nil))
   )
-
 ;; marginalia file information
 (use-package marginalia
   :ensure t
