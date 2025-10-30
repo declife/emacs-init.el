@@ -39,7 +39,6 @@
 
 ;;; themes
 (load-theme 'zenburn t)
-
 ;;(load-theme 'modus-operandi-tinted t)
 
 ;; magit mode
@@ -53,9 +52,28 @@
 (tool-bar-mode -1)                     ;; Disable the toolbar
 (menu-bar-mode -1)                     ;; Disable the menu bar
 (scroll-bar-mode -1)                   ;; Disable the scroll bar
+(which-key-mode)                       ;; which key
+(windmove-default-keybindings)         ;; windows move
 (global-display-line-numbers-mode t)   ;; Show line numbers
-(setq column-number-mode t)   ;; Show colume numbers
+(setq column-number-mode t)            ;; Show colume numbers
 (global-set-key (kbd "C-x C-b") 'ibuffer) ;; Better buffer management
+(add-hook 'after-init-hook 'global-company-mode) ;; company-mode
+
+;; indent
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+
+;; i-search lazy-count
+(setq isearch-lazy-count t)
+(setq lazy-count-prefix-format nil)
+(setq lazy-count-suffix-format "   (%s/%s)")
+
+;; compilation 文字化け
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  (let ((inhibit-read-only t))
+    (ansi-color-apply-on-region (point-min) (point-max))))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 ;; Set up a file backup directory
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups/"))
@@ -64,6 +82,7 @@
       delete-old-versions t  ;; Delete excess backups
       kept-new-versions 20
       kept-old-versions 5)
+
 ;; Set up a file autosave directory
 (defvar my-auto-save-folder (concat "~/.emacs.d/auto-save/")); folder for auto-saves
 (setq auto-save-list-file-prefix "~/.emacs.d/auto-save/.saves-"); set prefix for auto-saves 
@@ -77,20 +96,10 @@
         ("\\*Org Agenda\\*" . ((display-buffer-at-bottom)))))
 
 ;; set time clock
-
 (setq display-time-format "%H:%M:%S, %a %m/%d")
 (setq display-time-interval 1)
 (setq display-time-default-load-average nil)
 (display-time-mode 1)
-
-;; (defun display-time-bottom-right ()
-;;   (and (equal (cddr (window-pixel-edges))
-;;               (cddr (window-pixel-edges (frame-root-window))))
-;;        '(#(" " 0 1 (display (space :align-to (- right 20))))
-;;          display-time-string)))
-
-
-;; (setq global-mode-string '(:eval (display-time-bottom-right)))
 
 ;;; desktop save mode
 ;; restart with saved buffer
@@ -102,13 +111,13 @@
       desktop-lazy-verbose nil         ;; not show lazy load info
       desktop-load-locked-desktop t)   ;; allow to load locked desktop
 
-; exclude non-need buffer type
+;; exclude non-need buffer type
 (add-to-list 'desktop-modes-not-to-save 'dired-mode)
 (add-to-list 'desktop-modes-not-to-save 'Info-mode)
 (add-to-list 'desktop-modes-not-to-save 'info-lookup-mode)
 (add-to-list 'desktop-modes-not-to-save 'fundamental-mode)
 
-; exclude buffer of special name
+;; exclude buffer of special name
 (setq desktop-buffers-not-to-save
       (concat "\\("
               "^nn\\.a[0-9]+\\|"         ;; Gnus
@@ -117,15 +126,10 @@
               "\\*.*\\*"                 ;; all temporary buffers named with surrounding asterisks
               "\\)$"))
 
-
-;; company-mode
-(add-hook 'after-init-hook 'global-company-mode)
-
-;; org-mode
+;;; org-mode
 ;; org-agenda
 (setq org-agenda-files '("~/project/document/org")
-      org-agenda-include-diary t
-      )
+      org-agenda-include-diary t)
 (global-set-key (kbd "C-c a") 'org-agenda)
 ;; disable pairing of < and > in org-mode src blocks
 (add-hook 'org-mode-hook
@@ -146,34 +150,14 @@
 (org-babel-do-load-languages
  'org-babel-load-languages '((python . t) (C . t) (shell . t)))
 
-;; compilation 文字化け
-(require 'ansi-color)
-(defun colorize-compilation-buffer ()
-  (let ((inhibit-read-only t))
-    (ansi-color-apply-on-region (point-min) (point-max))))
-(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
-
-;; windows move
-(windmove-default-keybindings)
-
-;; python mode
+;;; python mode
 (setq major-mode-remap-alist
       '((python-mode . python-ts-mode)))
 (setq python-shell-interpreter "python3")
 
-;; indent
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-
-;; i-search lazy-count
-(setq isearch-lazy-count t)
-(setq lazy-count-prefix-format nil)
-(setq lazy-count-suffix-format "   (%s/%s)")
-
-(which-key-mode)
-
-(global-set-key (kbd "C-c o") 'ff-find-other-file)
 ;;; C++ IDE
+(global-set-key (kbd "C-c o") 'ff-find-other-file)
+
 (defun chromium-c++-mode-hook ()
   (setq c-basic-offset 2)     ;; indentation width
   (setq indent-tabs-mode nil) ;;
@@ -182,9 +166,7 @@
 
 (add-hook 'c++-mode-hook 'chromium-c++-mode-hook)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                        minibuffer and search(find/grep)                                  ;; 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; minibuffer and search(find/grep)
 ;; Enable Vertico.
 (use-package vertico
   :init
@@ -206,8 +188,8 @@
                         :background "#5e5e5c"
                         :extend t
                         :box '(:line-width -1 :color "#888888")
-                        :underline nil))
-  )
+                        :underline nil)))
+
 ;; marginalia file information
 (use-package marginalia
   :ensure t
@@ -233,8 +215,7 @@
   (read-extended-command-predicate #'command-completion-default-include-p)
   ;; Do not allow the cursor in the minibuffer prompt
   (minibuffer-prompt-properties
-   '(read-only t cursor-intangible t face minibuffer-prompt))
-  )
+   '(read-only t cursor-intangible t face minibuffer-prompt)))
 
 ;; Optionally use the `orderless' completion style.
 (use-package orderless
@@ -269,11 +250,13 @@
             (car (project-roots project)))))
   :custom
   (consult-preview-key "C-<return>") ;; preview manually M-.
-  )
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                          minibuffer and search(find/grep)                                ;; 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  :config
+  (set-face-attribute 'consult-file nil
+                      :foreground (face-attribute 'font-lock-constant-face :foreground)
+                      :weight 'normal)
+  (set-face-attribute 'consult-line-number nil
+                      :foreground (face-attribute 'warning :foreground)
+                      :weight 'normal))
 
 ;;; translate
 (use-package gt
@@ -286,10 +269,7 @@
          :render (gt-buffer-render
                   :dislike-header t
                   )))
-  (setq gt-polyglot-p t)
-  ;; (setq display-buffer-alist
-  ;;       '(("\\*gt-result\\*" . ((display-buffer-at-bottom display-buffer-pop-up-window)))))
-  )
+  (setq gt-polyglot-p t))
 
 (global-set-key (kbd "C-c t") 'gt-translate)
 
