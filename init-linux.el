@@ -24,7 +24,7 @@
  '(org-agenda-files '("~/project/document/alpine.org"))
  '(package-selected-packages
    '(company consult doom-modeline flycheck gt magit marginalia
-             modus-themes orderless projectile vertico vterm
+             modus-themes orderless projectile slime vertico vterm
              zenburn-theme)))
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
@@ -57,6 +57,7 @@
 (global-display-line-numbers-mode t)   ;; Show line numbers
 (setq column-number-mode t)            ;; Show colume numbers
 (global-set-key (kbd "C-x C-b") 'ibuffer) ;; Better buffer management
+(global-set-key (kbd "C-x ¥") 'shrink-window) ;; shrink window
 (add-hook 'after-init-hook 'global-company-mode) ;; company-mode
 
 ;; indent
@@ -100,6 +101,15 @@
 (setq display-time-interval 1)
 (setq display-time-default-load-average nil)
 (display-time-mode 1)
+
+;;; vterm
+;; Create numbered vterm buffers easily
+(defun my/vterm-new ()
+  "Create a new vterm buffer."
+  (interactive)
+  (let ((buffer-name (read-string "vterm buffer name: ")))
+    (vterm (concat "*vterm-" buffer-name "*"))))
+(global-set-key (kbd "C-c v") 'my/vterm-new)
 
 ;;; desktop save mode
 ;; restart with saved buffer
@@ -285,5 +295,16 @@
   (setq doom-modeline-buffer-encoding t)
   (setq doom-modeline-time t)
   (setq doom-modeline-vcs t))
+
+;;; lisp
+;; slime
+(use-package slime
+  :ensure t
+  :init
+  (setq inferior-lisp-program "sbcl")
+  :config
+  (slime-setup '(slime-fancy slime-quicklisp slime-asdf slime-mrepl)))
+
+(add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
 
 ;;; end of init
