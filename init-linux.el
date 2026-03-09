@@ -23,9 +23,9 @@
  ;; If there is more than one, they won't work right.
  '(org-agenda-files '("~/project/document/alpine.org"))
  '(package-selected-packages
-   '(company consult doom-modeline flycheck gt magit marginalia
-             modus-themes orderless projectile slime vertico vterm
-             zenburn-theme)))
+   '(2048-game company consult doom-modeline flycheck gptel gt magit
+               marginalia modus-themes orderless projectile slime
+               vertico vterm zenburn-theme)))
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
@@ -306,5 +306,14 @@
   (slime-setup '(slime-fancy slime-quicklisp slime-asdf slime-mrepl)))
 
 (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
+
+;;; gptel
+
+;; OPTIONAL configuration
+(setq
+ gptel-model 'gemini-3-flash-preview
+ gptel-backend (gptel-make-gemini "Gemini"
+                 :key gptel-api-key
+                 :stream t))
 
 ;;; end of init
