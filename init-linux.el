@@ -41,12 +41,6 @@
 (load-theme 'zenburn t)
 ;;(load-theme 'modus-operandi-tinted t)
 
-;; magit mode
-;(setq magit-ediff-dwim-show-on-hunks nil)
-(setq ediff-split-window-function 'split-window-horizontally)
-(setq ediff-merge-split-window-function 'split-window-horizontally)
-
-
 ;;; General settings
 (setq inhibit-startup-message t)       ;; Disable the startup message
 (tool-bar-mode -1)                     ;; Disable the toolbar
@@ -167,6 +161,8 @@
 
 ;;; C++ IDE
 (global-set-key (kbd "C-c o") 'ff-find-other-file)
+(global-set-key (kbd "C-c r")
+                (lambda () (interactive) (revert-buffer nil t)))
 
 (defun chromium-c++-mode-hook ()
   (setq c-basic-offset 2)     ;; indentation width
@@ -175,6 +171,14 @@
   (c-set-offset 'innamespace 0))
 
 (add-hook 'c++-mode-hook 'chromium-c++-mode-hook)
+
+;;; magit mode
+;(global-auto-revert-mode 1)
+
+
+;(setq magit-ediff-dwim-show-on-hunks nil)
+(setq ediff-split-window-function 'split-window-horizontally)
+(setq ediff-merge-split-window-function 'split-window-horizontally)
 
 ;;; minibuffer and search(find/grep)
 ;; Enable Vertico.
