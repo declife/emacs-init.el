@@ -131,28 +131,42 @@
               "\\)$"))
 
 ;;; org-mode
-;; org-agenda
-(setq org-agenda-files '("~/project/document/org")
-      org-agenda-include-diary t)
-(global-set-key (kbd "C-c a") 'org-agenda)
-;; disable pairing of < and > in org-mode src blocks
-(add-hook 'org-mode-hook
-          (lambda ()
-            (modify-syntax-entry ?< ".")
-            (modify-syntax-entry ?> ".")))
+(use-package org
+  :bind (("C-c a" . org-agenda))
+  :config
+  ;; org-tempo
+  (require 'org-tempo)
 
-;; set checkbox
-(add-hook 'org-mode-hook (lambda ()
-  "Beautify Org Checkbox Symbol"
-  (push '("[ ]" . "☐") prettify-symbols-alist)
-  (push '("[X]" . "☑" ) prettify-symbols-alist)
-  (push '("[-]" . "❍" ) prettify-symbols-alist)
-  (prettify-symbols-mode)))
+  ;; agenda
+  (setq org-agenda-files '("~/project/document/org")
+        org-agenda-include-diary t)
 
-;; src blocks
-(setq org-babel-python-command "python3")
-(org-babel-do-load-languages
- 'org-babel-load-languages '((python . t) (C . t) (shell . t)))
+  ;; src block templates
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("cpp" . "src cpp"))
+  (add-to-list 'org-structure-template-alist '("p" . "src python"))
+  (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
+
+  ;; babel
+  (setq org-babel-python-command "python3")
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)
+     (C      . t)
+     (shell  . t)))
+
+  ;; org-mode hooks
+  (add-hook 'org-mode-hook
+            (lambda ()
+              ;; disable pairing of < and >
+              (modify-syntax-entry ?< ".")
+              (modify-syntax-entry ?> ".")
+
+              ;; prettify checkboxes
+              (push '("[ ]" . "☐") prettify-symbols-alist)
+              (push '("[X]" . "☑") prettify-symbols-alist)
+              (push '("[-]" . "❍") prettify-symbols-alist)
+              (prettify-symbols-mode 1))))
 
 ;;; python mode
 (setq major-mode-remap-alist
