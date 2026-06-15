@@ -25,7 +25,7 @@
  '(package-selected-packages
    '(2048-game company consult doom-modeline flycheck gptel gt magit
                marginalia modus-themes orderless projectile slime
-               vertico vterm zenburn-theme)))
+               transient vertico vterm zenburn-theme)))
 (when (cl-find-if-not #'package-installed-p package-selected-packages)
   (package-refresh-contents)
   (mapc #'package-install package-selected-packages))
@@ -130,6 +130,10 @@
               "\\*.*\\*"                 ;; all temporary buffers named with surrounding asterisks
               "\\)$"))
 
+;;; ghostel
+;; (use-package ghostel
+;;   :vc (:url "https://github.com/dakra/ghostel" :rev :newest))
+
 ;;; org-mode
 (use-package org
   :bind (("C-c a" . org-agenda))
@@ -225,9 +229,9 @@
   (marginalia-mode 1))
 
 ;; Persist history over Emacs restarts. Vertico sorts by history position.
-(use-package savehist
-  :init
-  (savehist-mode))
+;; (use-package savehist
+;;   :init
+;;   (savehist-mode))
 
 ;; Emacs minibuffer configurations.
 (use-package emacs
@@ -267,6 +271,7 @@
    ("C-c m" . consult-mode-command)   ;; command list of current major-mode
    ("C-c f" . consult-fd)             ;; fd
    ("C-c g" . consult-ripgrep)        ;; ripgrep
+   ("C-c b" . consult-buffer)        ;; consult-buffer
    )
   :hook
   (completion-list-mode . consult-preview-at-point-mode) ;; preview support
@@ -325,13 +330,5 @@
 
 (add-to-list 'auto-mode-alist '("\\.cl\\'" . lisp-mode))
 
-;;; gptel
-
-;; OPTIONAL configuration
-(setq
- gptel-model 'gemini-3-flash-preview
- gptel-backend (gptel-make-gemini "Gemini"
-                 :key gptel-api-key
-                 :stream t))
 
 ;;; end of init
